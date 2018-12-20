@@ -3,19 +3,13 @@ package calculator;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Each node could be
  * 1. an expression like: term1 + term2
  * 2. a term like: x^2, 2x, 5 * x (where * is optional, i.e. 5x and 5*x are treated the same), a / b
  * 3. a factor like: 123, x, sin(x), ln(x)
  *
- * @author yihua
+ * @author kelly.li
  */
 public class EvaluatorNode {
     private List<EvaluatorNode> children;

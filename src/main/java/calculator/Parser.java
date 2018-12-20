@@ -1,19 +1,11 @@
 package calculator;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- *
- * @author yihua
+ * @author kelly.li
  */
-
 public class Parser {
 
-    private final String str;
+    private final String str; // original input expression
     private int pos = -1;
     private int ch;
 
@@ -21,7 +13,7 @@ public class Parser {
         str = expr;
     }
 
-    // This is the public method.
+    // This is the public method. It returns a tree of EvaluatorNode when complete parsing
     public EvaluatorNode parse() {
         nextChar();
         EvaluatorNode x = parseExpression();
@@ -47,7 +39,7 @@ public class Parser {
     // Grammar:
     // expression: term | expression `+` term | expression `-` term
     // term: factor | term `*` factor | term `/` factor
-    // factor: number | function `(` expression `)` | `+` factor | `-` factor | `(` expression `)` | factor `^` factor
+    // factor: e | number | function `(` expression `)` | `+` factor | `-` factor | `(` expression `)` | factor `^` factor
     //
 
     private EvaluatorNode parseExpression() {
@@ -55,11 +47,11 @@ public class Parser {
         for (;;) {
             if (consume('+')) {
                 final EvaluatorNode secondArg = parseTerm();
-                x = new EvaluatorNode("+", x, secondArg); // addition
+                x = new EvaluatorNode("+", x, secondArg);
             }
             else if (consume('-')) {
                 final EvaluatorNode secondArg = parseTerm();
-                x = new EvaluatorNode("-", x, secondArg); // subtraction
+                x = new EvaluatorNode("-", x, secondArg);
             }
             else {
                 return x;
@@ -72,12 +64,12 @@ public class Parser {
         while (true) {
             if (consume('*')) {
                 final EvaluatorNode secondArg = parseTerm();
-                x = new EvaluatorNode("*", x, secondArg); // multiplication
+                x = new EvaluatorNode("*", x, secondArg);
             }
 
             else if (consume('/')) {
                 final EvaluatorNode secondArg = parseTerm();
-                x = new EvaluatorNode("/", x, secondArg); // division
+                x = new EvaluatorNode("/", x, secondArg);
             }
             else {
                 return x;
@@ -89,7 +81,7 @@ public class Parser {
         final EvaluatorNode x = parseFactor();
         if (consume('^')) {
             final EvaluatorNode secondArg = parseTerm0();
-            return new EvaluatorNode("^", x, secondArg); // exponentiation
+            return new EvaluatorNode("^", x, secondArg);
         }
 
         return x;
@@ -100,7 +92,7 @@ public class Parser {
             return parseTerm(); // unary plus
         }
         if (consume('-')) {
-            return new EvaluatorNode("-", parseTerm()); // unary minus
+            return new EvaluatorNode("-", parseTerm());
         }
 
         if (consume('x')) {
@@ -109,14 +101,15 @@ public class Parser {
 
         final int startPos = pos;
 
-        if (consume('(')) { // parentheses
+        if (consume('(')) {
             EvaluatorNode x = parseExpression();
-            consume(')');
+            if (!consume(')')) {
+                throw new IllegalStateException("Missing ). ");
+            }
             return x;
         }
 
         if ((ch >= '0' && ch <= '9') || ch == '.') {
-            // numbers
             while ((ch >= '0' && ch <= '9') || ch == '.') {
                 nextChar();
             }
@@ -136,11 +129,11 @@ public class Parser {
                 nextChar();
             }
             String func = str.substring(startPos, pos);
-            
+
             if (func.equals("e")) {
                 return new EvaluatorNode(Math.E);
             }
-            
+
             if (func.equals("pi")) {
                 return new EvaluatorNode(Math.PI);
             }

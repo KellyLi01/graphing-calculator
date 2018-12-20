@@ -3,16 +3,10 @@ package calculator;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * To change license header, choose License Headers in Project Properties.
- * To change template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * For a given equation, and a range of x-axis, class parses the equation
  *
- * @author yihua
+ * @author kelly.li
  */
 public class EquationEvaluator {
 
