@@ -10,3 +10,8 @@ sourceSets {
     }
 }
 
+task run(type: JavaExec) {
+  classpath sourceSets.main.runtimeClasspath
+  main = "calculator.Calculator"
+}
+
