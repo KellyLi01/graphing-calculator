@@ -199,7 +199,7 @@ public class EquationEvaluator {
             double midY = (leftLimit + rightLimit) / 2.0;
             final Point2D aPoint = new Point2D.Double(Double.NaN, midY);
             this.asymtotes.add(aPoint);
-            System.out.println("Asymtote at x=" + midY);
+            System.out.println("Asymtote at y=" + midY);
         }
 
         if (discontinuePoints.size() == 0) {
