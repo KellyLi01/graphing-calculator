@@ -4,6 +4,8 @@ package calculator;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.util.List;
 import javax.swing.*;
 
 /**
@@ -13,14 +15,14 @@ public class Window extends JFrame {
 
     static final double INCREMENT = 0.005;
 
-    private final int WIDTH = 800;
-    private final int HEIGHT = 400;
+    private final int WIDTH = 840;
+    private final int HEIGHT = 440;
     private Grapher graph;
     private ControlPanel controls;
-    private final int startX = -5;
-    private final int startY = -5;
-    private final int endX = 5;
-    private final int endY = 5;
+    private final int startX = -20;
+    private final int startY = -20;
+    private final int endX = 20;
+    private final int endY = 20;
     private String equation;
     private EquationEvaluator evaluator;
 
@@ -83,11 +85,16 @@ public class Window extends JFrame {
                     drawPoints(g2, Color.black, discontintuities, false);
                 }
 
-                final double[] asymptote = evaluator.getAsymptote();
-                if (asymptote != null) {
-                    drawDashedLine(g2, Color.pink, asymptote[0], /*-20.0*/ startX, asymptote[0], /*20.0*/ endX);
-                    drawDashedLine(g2, Color.pink, /*-20.0*/ startY, asymptote[1], /*20.0*/ endY, asymptote[1]);
-                    System.out.println("Asymptote at x=" + Math.round(asymptote[0]*100.0)/100.0);
+                final List<Point2D> asymptotes = evaluator.getAsymtotes();
+                if (asymptotes.size() > 0) {
+                    for (final Point2D point2D: asymptotes)  {
+                        if (Double.isNaN(point2D.getX())) {
+                            drawDashedLine(g2, Color.pink, /*-20.0*/ startX, point2D.getY(), /*20.0*/ endX, point2D.getY());
+                        }
+                        else if (Double.isNaN(point2D.getY())) {
+                            drawDashedLine(g2, Color.pink, /*-20.0*/ point2D.getX(), startY, point2D.getX(), /*20.0*/ endY);
+                        }
+                    }
                 }
             }
             if (showMinMax) {
@@ -98,7 +105,7 @@ public class Window extends JFrame {
             }
 
             if (showInflection) {
-                final double[][] flexions = evaluator.getFlexions();
+                final double[][] flexions = evaluator.getPointsOfInflection();
                 if (flexions != null) {
                     drawPoints(g2, Color.magenta, flexions, true);
                 }
@@ -112,6 +119,7 @@ public class Window extends JFrame {
             }
 
             if (showIntegration) {
+                drawLine(g2, Color.green, evaluator.getFirstDerivPts());
                 drawArea(g2, Color.orange);
                 controls.showIntegrationResult(evaluator.calculateIntegration(controls.getLowerLimit(), controls.getUpperLimit()));
             }
@@ -137,7 +145,7 @@ public class Window extends JFrame {
             final double lowerLimit = controls.getLowerLimit();
             final double upperLimit = controls.getUpperLimit();
             g2.setColor(orange);
-            for (final double[] point: evaluator.getCoordinates()) {
+            for (final double[] point: evaluator.getFirstDerivPts()) {
                 double x = point[0];
                 double y = point[1];
                 if (Double.isNaN(y)) {

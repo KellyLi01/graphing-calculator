@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 /**
+ * This is the controlling panel, grouping inputs and buttons.
+ *
  * @author kelly.li
  */
 
@@ -82,7 +84,6 @@ public class ControlPanel extends JPanel {
                                 .addComponent(typeEquationHere)
                                 .addComponent(textEq)
                                 .addGroup(gl.createSequentialGroup()
-                                        //.addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)) ****** add the lower and upper limit labels
                                         .addComponent(firstDerivBtn)
                                         .addComponent(secondDerivBtn)
                                 )
@@ -90,7 +91,6 @@ public class ControlPanel extends JPanel {
                                         .addComponent(minMaxBtn)
                                         .addComponent(inflexionBtn)
                                 )
-                                //.addComponent(firstDerivBtn, GroupLayout.Alignment.TRAILING)
                                 .addComponent(typeLimitsHere)
                                 .addGroup(gl.createSequentialGroup()
                                         .addComponent(lowerLimitField)

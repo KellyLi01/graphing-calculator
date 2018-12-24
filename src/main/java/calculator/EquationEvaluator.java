@@ -1,10 +1,14 @@
 package calculator;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * For a given equation, and a range of x-axis, class parses the equation
+ * For a given equation, and a range of x-axis, class use {@link Parser} to parse the equation.
+ * It then evaluates the equation against the given x-range and increment to generate the list
+ * of coordinates, first derivative points, second derivative points, removable discontinuities
+ * and points of inflection
  *
  * @author kelly.li
  */
@@ -16,7 +20,7 @@ public class EquationEvaluator {
     private final double[][] turningPoints;
     private final double[][] pointsOfInflection;
     private final double[][] removableDiscontinuities;
-    private double[] asymptote;
+    private List<Point2D> asymtotes = new ArrayList<>();
     private final EvaluatorNode equationTree;
     private final double step;
     private final double sX, eX;
@@ -57,7 +61,7 @@ public class EquationEvaluator {
         return turningPoints;
     }
 
-    public double[][] getFlexions() {
+    public double[][] getPointsOfInflection() {
         return pointsOfInflection;
     }
 
@@ -65,42 +69,43 @@ public class EquationEvaluator {
         return removableDiscontinuities;
     }
 
-    public double[] getAsymptote() {
-        return asymptote;
+    public List<Point2D> getAsymtotes() {
+        return this.asymtotes;
     }
 
     public double calculateIntegration(double startX, double endX) {
 
-        if (asymptote != null || removableDiscontinuities != null) {
-            if (asymptote != null) {
-                for (int i = 0; i < asymptote.length; i++) {
-                    if (asymptote[i] >= startX && asymptote[i] <= endX)
+        if (asymtotes.size() > 0 || removableDiscontinuities != null) {
+            if (asymtotes.size() > 0) {
+                for (final Point2D asymtote: asymtotes) {
+                    if (Double.isNaN(asymtote.getY()) && asymtote.getX() >= startX && asymtote.getX() <= endX) {
                         return Double.NaN;
+                    }
                 }
             }
             if (removableDiscontinuities != null) {
                 for (int i = 0; i < removableDiscontinuities.length; i++) {
-                    if (removableDiscontinuities[i][0] >= startX && removableDiscontinuities[i][1] <= endX)
+                    if (removableDiscontinuities[i][0] >= startX && removableDiscontinuities[i][1] <= endX) {
                         return Double.NaN;
+                    }
                 }
             }
-            //return Double.NaN;
         }
         int index = 0;
-        while (/*coordinates*/firstDerivPts[index][0] < startX && index < /*coordinates*/firstDerivPts.length) {
+        while (firstDerivPts[index][0] < startX && index < firstDerivPts.length) {
             index++;
         }
 
-        double prevY = /*coordinates*/firstDerivPts[index][1];
+        double prevY = firstDerivPts[index][1];
         double sum = 0.0;
-        while (/*coordinates*/firstDerivPts[index][0] <= endX && index < /*coordinates*/firstDerivPts.length) {
-            double area = Window.INCREMENT * (/*coordinates*/firstDerivPts[index][1] + prevY) / 2.0;
-            sum += /*Math.round(*/area /** 100.0) / 100.0*/;
-            prevY = /*coordinates*/firstDerivPts[index][1];
+        while (firstDerivPts[index][0] <= endX && index < firstDerivPts.length) {
+            double area = Window.INCREMENT * (firstDerivPts[index][1] + prevY) / 2.0;
+            sum += area ;
+            prevY = firstDerivPts[index][1];
             index++;
         }
         System.out.println("f(" + endX + ") - f(" + startX + ") = " + Math.round((coordinates[(int)((endX-sX)/step)][1] - coordinates[(int)((startX-sX)/step)][1])*100.0)/100.0);
-        return Math.round(sum * 100) / 100.0;
+        return Math.round(sum * 100.0) / 100.0;
     }
 
     private double[][] calcTurningPoints(final double[][] derivatives, boolean isSecondDeriv) {
@@ -181,13 +186,17 @@ public class EquationEvaluator {
 
                     discontinuePoints.add(point);
                 }
-                else {
-                    asymptote = new double[2];
-                    asymptote[0] = coordinates[i][0];
-                    asymptote[1] = midPoint;
-                    //System.out.println("Asymptote at x=" + Math.round(asymptote[0]*100.0)/100.0);
+                else if (!Double.isNaN(prev[1]) && !Double.isNaN(next[1])){
+                    final Point2D aPoint = new Point2D.Double(coordinates[i][0], Double.NaN);
+                    this.asymtotes.add(aPoint);
                 }
             }
+        }
+        final double leftLimit = equationTree.evaluate(-Double.MAX_VALUE);
+        final double rightLimit = equationTree.evaluate(Double.MAX_VALUE);
+        if (Math.abs(rightLimit - leftLimit) < 0.001) {
+            final Point2D aPoint = new Point2D.Double(Double.NaN, (leftLimit + rightLimit) / 2.0);
+            this.asymtotes.add(aPoint);
         }
 
         if (discontinuePoints.size() == 0) {

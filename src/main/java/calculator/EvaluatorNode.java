@@ -105,9 +105,13 @@ public class EvaluatorNode {
             return sqrt(xVal);
         }
 
+        if (value.equals("cqrt")) {
+            return cqrt(xVal);
+        }
+
         throw new IllegalStateException("Unknown operator: " + value);
     }
-    
+
     //add child to parent
     private void addChild(EvaluatorNode c) {
         children.add(c);
@@ -151,7 +155,7 @@ public class EvaluatorNode {
     private double exponent(final double xVal) {
         validateArguments(2);
         final double base = children.get(0).evaluate(xVal);
-        final double exp = children.get(1).evaluate(xVal);
+        final long exp = Math.round(children.get(1).evaluate(xVal));
         return Math.pow(base, exp);
     }
 
@@ -195,6 +199,12 @@ public class EvaluatorNode {
         validateArguments(1);
         final double base = children.get(0).evaluate(xVal);
         return Math.sqrt(base);
+    }
+
+    private double cqrt(final double xVal) {
+        validateArguments(1);
+        final double base = children.get(0).evaluate(xVal);
+        return Math.cbrt(base);
     }
 
 

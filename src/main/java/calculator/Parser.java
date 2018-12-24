@@ -63,13 +63,17 @@ public class Parser {
         EvaluatorNode x = parseTerm0();
         while (true) {
             if (consume('*')) {
-                final EvaluatorNode secondArg = parseTerm();
+                final EvaluatorNode secondArg = parseTerm0();
                 x = new EvaluatorNode("*", x, secondArg);
             }
 
             else if (consume('/')) {
-                final EvaluatorNode secondArg = parseTerm();
+                final EvaluatorNode secondArg = parseTerm0();
                 x = new EvaluatorNode("/", x, secondArg);
+            }
+            else if (pos < str.length() && ((char)ch) != '+' && ((char)ch) != '-' && ((char)ch) != ')') {
+                final EvaluatorNode secondArg = parseTerm0();
+                x = new EvaluatorNode("*", x, secondArg);
             }
             else {
                 return x;
@@ -116,11 +120,6 @@ public class Parser {
             double aDouble = Double.parseDouble(str.substring(startPos, pos));
 
             final EvaluatorNode numeric = new EvaluatorNode(aDouble);
-
-            if (consume('x')) {
-                return new EvaluatorNode("*", numeric, new EvaluatorNode("x"));
-            }
-
             return numeric;
         }
 
