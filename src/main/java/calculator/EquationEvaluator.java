@@ -10,6 +10,7 @@ import java.util.List;
  * of coordinates, first derivative points, second derivative points, removable discontinuities
  * and points of inflection
  */
+
 public class EquationEvaluator {
 
     private final double[][] coordinates;
@@ -18,7 +19,7 @@ public class EquationEvaluator {
     private final double[][] turningPoints;
     private final double[][] pointsOfInflection;
     private final double[][] removableDiscontinuities;
-    private List<Point2D> asymtotes = new ArrayList<>();
+    private double[] asymptote;
     private final EvaluatorNode equationTree;
     private final double step;
     private final double sX, eX;
@@ -59,7 +60,7 @@ public class EquationEvaluator {
         return turningPoints;
     }
 
-    public double[][] getPointsOfInflection() {
+    public double[][] getFlexions() {
         return pointsOfInflection;
     }
 
@@ -67,25 +68,25 @@ public class EquationEvaluator {
         return removableDiscontinuities;
     }
 
-    public List<Point2D> getAsymtotes() {
-        return this.asymtotes;
+    public double[] getAsymptote() {
+        return asymptote;
     }
 
+    // calculates the integration of f(x) over a given interval
+    // will also show in the output the integration of f'(x) over the given interval using FTC
     public double calculateIntegration(double startX, double endX) {
 
-        if (asymtotes.size() > 0 || removableDiscontinuities != null) {
-            if (asymtotes.size() > 0) {
-                for (final Point2D asymtote: asymtotes) {
-                    if (Double.isNaN(asymtote.getY()) && asymtote.getX() >= startX && asymtote.getX() <= endX) {
+        if (asymptote != null || removableDiscontinuities != null) {
+            if (asymptote != null) {
+                for (int i = 0; i < asymptote.length; i++) {
+                    if (asymptote[i] >= startX && asymptote[i] <= endX)
                         return Double.NaN;
-                    }
                 }
             }
             if (removableDiscontinuities != null) {
                 for (int i = 0; i < removableDiscontinuities.length; i++) {
-                    if (coordinates[i][0] >= startX && coordinates[i][1] <= endX) {
+                    if (removableDiscontinuities[i][0] >= startX && removableDiscontinuities[i][1] <= endX)
                         return Double.NaN;
-                    }
                 }
             }
         }
@@ -96,16 +97,17 @@ public class EquationEvaluator {
 
         double prevY = coordinates[index][1];
         double sum = 0.0;
-        while (coordinates[index][0] <= endX && index < firstDerivPts.length) {
+        while (coordinates[index][0] <= endX && index < coordinates.length) {
             double area = Window.INCREMENT * (coordinates[index][1] + prevY) / 2.0;
-            sum += area ;
+            sum += area;
             prevY = coordinates[index][1];
             index++;
         }
         System.out.println("f(" + endX + ") - f(" + startX + ") = " + Math.round((coordinates[(int)((endX-sX)/step)][1] - coordinates[(int)((startX-sX)/step)][1])*100.0)/100.0);
-        return Math.round(sum * 100.0) / 100.0;
+        return Math.round(sum * 100) / 100.0;
     }
 
+    // calculates relative extrema/points of inflection, depending on input
     private double[][] calcTurningPoints(final double[][] derivatives, boolean isSecondDeriv) {
         if (derivatives == null) {
             return null;
@@ -150,7 +152,7 @@ public class EquationEvaluator {
         return null;
     }
 
-    // Evaluate an expression represented by a string and return coordinates as a two-dimensional array
+    // Evaluates an expression represented by a string and returns coordinates as a two-dimensional array
 
     private double[][] evaluate(final double startX, final double endX, final double step) {
 
