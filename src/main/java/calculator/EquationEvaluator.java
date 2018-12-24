@@ -9,8 +9,6 @@ import java.util.List;
  * It then evaluates the equation against the given x-range and increment to generate the list
  * of coordinates, first derivative points, second derivative points, removable discontinuities
  * and points of inflection
- *
- * @author kelly.li
  */
 public class EquationEvaluator {
 
@@ -85,23 +83,23 @@ public class EquationEvaluator {
             }
             if (removableDiscontinuities != null) {
                 for (int i = 0; i < removableDiscontinuities.length; i++) {
-                    if (removableDiscontinuities[i][0] >= startX && removableDiscontinuities[i][1] <= endX) {
+                    if (coordinates[i][0] >= startX && coordinates[i][1] <= endX) {
                         return Double.NaN;
                     }
                 }
             }
         }
         int index = 0;
-        while (firstDerivPts[index][0] < startX && index < firstDerivPts.length) {
+        while (coordinates[index][0] < startX && index < coordinates.length) {
             index++;
         }
 
-        double prevY = firstDerivPts[index][1];
+        double prevY = coordinates[index][1];
         double sum = 0.0;
-        while (firstDerivPts[index][0] <= endX && index < firstDerivPts.length) {
-            double area = Window.INCREMENT * (firstDerivPts[index][1] + prevY) / 2.0;
+        while (coordinates[index][0] <= endX && index < firstDerivPts.length) {
+            double area = Window.INCREMENT * (coordinates[index][1] + prevY) / 2.0;
             sum += area ;
-            prevY = firstDerivPts[index][1];
+            prevY = coordinates[index][1];
             index++;
         }
         System.out.println("f(" + endX + ") - f(" + startX + ") = " + Math.round((coordinates[(int)((endX-sX)/step)][1] - coordinates[(int)((startX-sX)/step)][1])*100.0)/100.0);
