@@ -155,7 +155,11 @@ public class EvaluatorNode {
     private double exponent(final double xVal) {
         validateArguments(2);
         final double base = children.get(0).evaluate(xVal);
-        final long exp = Math.round(children.get(1).evaluate(xVal));
+        final double originalExp = children.get(1).evaluate(xVal);
+        final long exp = Math.round(originalExp);
+        if (Math.abs(originalExp - exp) > 0.01) {
+            throw new ArithmeticException("Please use function sqrt()/cqrt() for roots of power. For power calculation, exponent must be integer.");
+        }
         return Math.pow(base, exp);
     }
 
