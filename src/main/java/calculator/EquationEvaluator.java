@@ -189,14 +189,17 @@ public class EquationEvaluator {
                 else if (!Double.isNaN(prev[1]) && !Double.isNaN(next[1])){
                     final Point2D aPoint = new Point2D.Double(coordinates[i][0], Double.NaN);
                     this.asymtotes.add(aPoint);
+                    System.out.println("Asymtote at x=" + coordinates[i][0]);
                 }
             }
         }
         final double leftLimit = equationTree.evaluate(-Double.MAX_VALUE);
         final double rightLimit = equationTree.evaluate(Double.MAX_VALUE);
         if (Math.abs(rightLimit - leftLimit) < 0.001) {
-            final Point2D aPoint = new Point2D.Double(Double.NaN, (leftLimit + rightLimit) / 2.0);
+            double midY = (leftLimit + rightLimit) / 2.0;
+            final Point2D aPoint = new Point2D.Double(Double.NaN, midY);
             this.asymtotes.add(aPoint);
+            System.out.println("Asymtote at x=" + midY);
         }
 
         if (discontinuePoints.size() == 0) {
