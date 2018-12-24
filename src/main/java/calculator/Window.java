@@ -8,9 +8,6 @@ import java.awt.geom.Point2D;
 import java.util.List;
 import javax.swing.*;
 
-/**
- * @author kelly.li
- */
 public class Window extends JFrame {
 
     static final double INCREMENT = 0.005;
