@@ -85,14 +85,14 @@ public class Window extends JFrame {
                     drawPoints(g2, Color.black, discontintuities, false);
                 }
 
-                final List<Point2D> asymptotes = evaluator.getAsymtotes();
+                final List<Point2D> asymptotes = evaluator.getAsymptotes();
                 if (asymptotes.size() > 0) {
                     for (final Point2D point2D: asymptotes)  {
                         if (Double.isNaN(point2D.getX())) {
-                            drawDashedLine(g2, Color.pink, /*-20.0*/ startX, point2D.getY(), /*20.0*/ endX, point2D.getY());
+                            drawDashedLine(g2, Color.pink, startX, point2D.getY(), endX, point2D.getY());
                         }
                         else if (Double.isNaN(point2D.getY())) {
-                            drawDashedLine(g2, Color.pink, /*-20.0*/ point2D.getX(), startY, point2D.getX(), /*20.0*/ endY);
+                            drawDashedLine(g2, Color.pink, point2D.getX(), startY, point2D.getX(), endY);
                         }
                     }
                 }
