@@ -8,6 +8,8 @@ import java.util.List;
  * 1. an expression like: term1 + term2
  * 2. a term like: x^2, 2x, 5 * x (where * is optional, i.e. 5x and 5*x are treated the same), a / b
  * 3. a factor like: 123, x, sin(x), ln(x)
+ *
+ * @author kelly.li
  */
 public class EvaluatorNode {
     private List<EvaluatorNode> children;
