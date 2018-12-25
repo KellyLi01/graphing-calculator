@@ -6,15 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.Line2D;
 import javax.swing.*;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
- * @author yihua
+ * @author kelly.li
  */
 public class Window extends JFrame {
 
@@ -92,8 +86,7 @@ public class Window extends JFrame {
 
                 final double[] asymptote = evaluator.getAsymptote();
                 if (asymptote != null) {
-                    drawDashedLine(g2, Color.pink, asymptote[0], /*-20.0*/ startX, asymptote[0], /*20.0*/ endX);
-                    //drawDashedLine(g2, Color.pink, /*-20.0*/ startY, asymptote[1], /*20.0*/ endY, asymptote[1]);
+                    drawDashedLine(g2, Color.pink, asymptote[0], startX, asymptote[0], endX);              
                     System.out.println("Asymptote at x=" + Math.round(asymptote[0]*100.0)/100.0);
                 }
             }
@@ -162,8 +155,8 @@ public class Window extends JFrame {
             final int distance = xSize / (endX - startX) * 2;
 
             g2.setColor(Color.black);
-            g2.drawLine(xGap, yGap + ySize/2, xGap + xSize, yGap + ySize/2); // x-exile
-            g2.drawLine(xGap +xSize/2, yGap, xGap + xSize/2, yGap + ySize);  // y-exile
+            g2.drawLine(xGap, yGap + ySize/2, xGap + xSize, yGap + ySize/2); // x-axis
+            g2.drawLine(xGap +xSize/2, yGap, xGap + xSize/2, yGap + ySize);  // y-axis
 
             g2.setColor(Color.lightGray);
             int gridX = ySize / 2 - distance;
@@ -180,13 +173,13 @@ public class Window extends JFrame {
 
             int gridY = xSize / 2 - distance;
             while (gridY >= 0) {
-                g2.drawLine(xGap + gridY, yGap, xGap + gridY, yGap + ySize);  // y-exile
+                g2.drawLine(xGap + gridY, yGap, xGap + gridY, yGap + ySize);  // y-axis
                 gridY -= distance;
             }
 
             gridY = xSize / 2 + distance;
             while (gridY <= xSize) {
-                g2.drawLine(xGap + gridY, yGap, xGap + gridY, yGap + ySize);  // y-exile
+                g2.drawLine(xGap + gridY, yGap, xGap + gridY, yGap + ySize);  // y-axis
                 gridY += distance;
             }
         }
