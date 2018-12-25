@@ -1,12 +1,15 @@
 package calculator;
 
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.List;
 import javax.swing.*;
+
+/**
+ * @author kelly.li
+ */
 
 public class Window extends JFrame {
 
