@@ -1,6 +1,6 @@
 package calculator;
 
-/*
+/**
 * @author kelly.li
 */
 
