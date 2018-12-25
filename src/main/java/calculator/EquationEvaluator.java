@@ -9,6 +9,8 @@ import java.util.List;
  * It then evaluates the equation against the given x-range and increment to generate the list
  * of coordinates, first derivative points, second derivative points, removable discontinuities
  * and points of inflection
+ *
+ * @author kelly.li
  */
 
 public class EquationEvaluator {
