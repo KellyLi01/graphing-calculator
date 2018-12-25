@@ -1,18 +1,13 @@
 package calculator;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * For a given equation, and a range of x-axis, class use {@link Parser} to parse the equation.
- * It then evaluates the equation against the given x-range and increment to generate the list
- * of coordinates, first derivative points, second derivative points, removable discontinuities
- * and points of inflection
+ * For a given equation, and a range of x-axis, class parses the equation
  *
  * @author kelly.li
  */
-
 public class EquationEvaluator {
 
     private final double[][] coordinates;
@@ -74,8 +69,8 @@ public class EquationEvaluator {
         return asymptote;
     }
 
-    // calculates the integration of f(x) over a given interval
-    // will also show in the output the integration of f'(x) over the given interval using FTC
+    // calculates integration of f(x) over the given interval
+    // returns in output the integration of f'(x) over the given interval using FTC
     public double calculateIntegration(double startX, double endX) {
 
         if (asymptote != null || removableDiscontinuities != null) {
@@ -109,7 +104,7 @@ public class EquationEvaluator {
         return Math.round(sum * 100) / 100.0;
     }
 
-    // calculates relative extrema/points of inflection, depending on input
+    // finds the relative extrema/points of inflection depending on the input
     private double[][] calcTurningPoints(final double[][] derivatives, boolean isSecondDeriv) {
         if (derivatives == null) {
             return null;
@@ -154,7 +149,7 @@ public class EquationEvaluator {
         return null;
     }
 
-    // Evaluates an expression represented by a string and returns coordinates as a two-dimensional array
+    // Evaluate an expression represented by a string and return coordinates as a two-dimensional array
 
     private double[][] evaluate(final double startX, final double endX, final double step) {
 
@@ -173,6 +168,7 @@ public class EquationEvaluator {
         return answers;
     }
 
+    // finds holes and vertical asymptotes in the graph
     private double[][] calcDiscontinuities(final double[][] coordinates) {
         final List<double[]> discontinuePoints = new ArrayList<>();
         for (int i = 1; i < coordinates.length; ++i) {
@@ -188,20 +184,12 @@ public class EquationEvaluator {
 
                     discontinuePoints.add(point);
                 }
-                else if (!Double.isNaN(prev[1]) && !Double.isNaN(next[1])){
-                    final Point2D aPoint = new Point2D.Double(coordinates[i][0], Double.NaN);
-                    this.asymtotes.add(aPoint);
-                    System.out.println("Asymtote at x=" + coordinates[i][0]);
+                else {
+                    asymptote = new double[2];
+                    asymptote[0] = coordinates[i][0];
+                    asymptote[1] = midPoint;
                 }
             }
-        }
-        final double leftLimit = equationTree.evaluate(-Double.MAX_VALUE);
-        final double rightLimit = equationTree.evaluate(Double.MAX_VALUE);
-        if (Math.abs(rightLimit - leftLimit) < 0.001) {
-            double midY = (leftLimit + rightLimit) / 2.0;
-            final Point2D aPoint = new Point2D.Double(Double.NaN, midY);
-            this.asymtotes.add(aPoint);
-            System.out.println("Asymtote at y=" + midY);
         }
 
         if (discontinuePoints.size() == 0) {

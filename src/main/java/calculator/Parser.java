@@ -1,12 +1,13 @@
 package calculator;
 
 /**
+ *
  * @author kelly.li
  */
 
 public class Parser {
 
-    private final String str; // original input expression
+    private final String str;
     private int pos = -1;
     private int ch;
 
@@ -14,7 +15,7 @@ public class Parser {
         str = expr;
     }
 
-    // This is the public method. It returns a tree of EvaluatorNode when complete parsing
+    // This is the public method.
     public EvaluatorNode parse() {
         nextChar();
         EvaluatorNode x = parseExpression();
@@ -40,7 +41,7 @@ public class Parser {
     // Grammar:
     // expression: term | expression `+` term | expression `-` term
     // term: factor | term `*` factor | term `/` factor
-    // factor: e | number | function `(` expression `)` | `+` factor | `-` factor | `(` expression `)` | factor `^` factor
+    // factor: number | function `(` expression `)` | `+` factor | `-` factor | `(` expression `)` | factor `^` factor
     //
 
     private EvaluatorNode parseExpression() {
@@ -48,11 +49,11 @@ public class Parser {
         for (;;) {
             if (consume('+')) {
                 final EvaluatorNode secondArg = parseTerm();
-                x = new EvaluatorNode("+", x, secondArg);
+                x = new EvaluatorNode("+", x, secondArg); // addition
             }
             else if (consume('-')) {
                 final EvaluatorNode secondArg = parseTerm();
-                x = new EvaluatorNode("-", x, secondArg);
+                x = new EvaluatorNode("-", x, secondArg); // subtraction
             }
             else {
                 return x;
@@ -64,17 +65,13 @@ public class Parser {
         EvaluatorNode x = parseTerm0();
         while (true) {
             if (consume('*')) {
-                final EvaluatorNode secondArg = parseTerm0();
-                x = new EvaluatorNode("*", x, secondArg);
+                final EvaluatorNode secondArg = parseTerm();
+                x = new EvaluatorNode("*", x, secondArg); // multiplication
             }
 
             else if (consume('/')) {
-                final EvaluatorNode secondArg = parseTerm0();
-                x = new EvaluatorNode("/", x, secondArg);
-            }
-            else if (pos < str.length() && ((char)ch) != '+' && ((char)ch) != '-' && ((char)ch) != ')') {
-                final EvaluatorNode secondArg = parseTerm0();
-                x = new EvaluatorNode("*", x, secondArg);
+                final EvaluatorNode secondArg = parseTerm();
+                x = new EvaluatorNode("/", x, secondArg); // division
             }
             else {
                 return x;
@@ -86,7 +83,7 @@ public class Parser {
         final EvaluatorNode x = parseFactor();
         if (consume('^')) {
             final EvaluatorNode secondArg = parseTerm0();
-            return new EvaluatorNode("^", x, secondArg);
+            return new EvaluatorNode("^", x, secondArg); // exponentiation
         }
 
         return x;
@@ -97,7 +94,7 @@ public class Parser {
             return parseTerm(); // unary plus
         }
         if (consume('-')) {
-            return new EvaluatorNode("-", parseTerm());
+            return new EvaluatorNode("-", parseTerm()); // unary minus
         }
 
         if (consume('x')) {
@@ -106,21 +103,25 @@ public class Parser {
 
         final int startPos = pos;
 
-        if (consume('(')) {
+        if (consume('(')) { // parentheses
             EvaluatorNode x = parseExpression();
-            if (!consume(')')) {
-                throw new IllegalStateException("Missing ). ");
-            }
+            consume(')');
             return x;
         }
 
         if ((ch >= '0' && ch <= '9') || ch == '.') {
+            // numbers
             while ((ch >= '0' && ch <= '9') || ch == '.') {
                 nextChar();
             }
             double aDouble = Double.parseDouble(str.substring(startPos, pos));
 
             final EvaluatorNode numeric = new EvaluatorNode(aDouble);
+
+            if (consume('x')) {
+                return new EvaluatorNode("*", numeric, new EvaluatorNode("x"));
+            }
+
             return numeric;
         }
 
@@ -129,11 +130,11 @@ public class Parser {
                 nextChar();
             }
             String func = str.substring(startPos, pos);
-
+            
             if (func.equals("e")) {
                 return new EvaluatorNode(Math.E);
             }
-
+            
             if (func.equals("pi")) {
                 return new EvaluatorNode(Math.PI);
             }

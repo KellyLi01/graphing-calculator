@@ -1,22 +1,21 @@
 package calculator;
 
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.util.List;
 import javax.swing.*;
 
 /**
+ *
  * @author kelly.li
  */
-
 public class Window extends JFrame {
 
     static final double INCREMENT = 0.005;
 
-    private final int WIDTH = 840;
-    private final int HEIGHT = 440;
+    private final int WIDTH = 800;
+    private final int HEIGHT = 400;
     private Grapher graph;
     private ControlPanel controls;
     private final int startX = -20;
@@ -85,16 +84,10 @@ public class Window extends JFrame {
                     drawPoints(g2, Color.black, discontintuities, false);
                 }
 
-                final List<Point2D> asymptotes = evaluator.getAsymptotes();
-                if (asymptotes.size() > 0) {
-                    for (final Point2D point2D: asymptotes)  {
-                        if (Double.isNaN(point2D.getX())) {
-                            drawDashedLine(g2, Color.pink, startX, point2D.getY(), endX, point2D.getY());
-                        }
-                        else if (Double.isNaN(point2D.getY())) {
-                            drawDashedLine(g2, Color.pink, point2D.getX(), startY, point2D.getX(), endY);
-                        }
-                    }
+                final double[] asymptote = evaluator.getAsymptote();
+                if (asymptote != null) {
+                    drawDashedLine(g2, Color.pink, asymptote[0], startX, asymptote[0], endX);              
+                    System.out.println("Asymptote at x=" + Math.round(asymptote[0]*100.0)/100.0);
                 }
             }
             if (showMinMax) {
@@ -105,7 +98,7 @@ public class Window extends JFrame {
             }
 
             if (showInflection) {
-                final double[][] flexions = evaluator.getPointsOfInflection();
+                final double[][] flexions = evaluator.getFlexions();
                 if (flexions != null) {
                     drawPoints(g2, Color.magenta, flexions, true);
                 }
@@ -119,7 +112,6 @@ public class Window extends JFrame {
             }
 
             if (showIntegration) {
-                drawLine(g2, Color.green, evaluator.getFirstDerivPts());
                 drawArea(g2, Color.orange);
                 controls.showIntegrationResult(evaluator.calculateIntegration(controls.getLowerLimit(), controls.getUpperLimit()));
             }
@@ -145,7 +137,7 @@ public class Window extends JFrame {
             final double lowerLimit = controls.getLowerLimit();
             final double upperLimit = controls.getUpperLimit();
             g2.setColor(orange);
-            for (final double[] point: evaluator.getFirstDerivPts()) {
+            for (final double[] point: evaluator.getCoordinates()) {
                 double x = point[0];
                 double y = point[1];
                 if (Double.isNaN(y)) {
@@ -163,8 +155,8 @@ public class Window extends JFrame {
             final int distance = xSize / (endX - startX) * 2;
 
             g2.setColor(Color.black);
-            g2.drawLine(xGap, yGap + ySize/2, xGap + xSize, yGap + ySize/2); // x-exile
-            g2.drawLine(xGap +xSize/2, yGap, xGap + xSize/2, yGap + ySize);  // y-exile
+            g2.drawLine(xGap, yGap + ySize/2, xGap + xSize, yGap + ySize/2); // x-axis
+            g2.drawLine(xGap +xSize/2, yGap, xGap + xSize/2, yGap + ySize);  // y-axis
 
             g2.setColor(Color.lightGray);
             int gridX = ySize / 2 - distance;
@@ -181,13 +173,13 @@ public class Window extends JFrame {
 
             int gridY = xSize / 2 - distance;
             while (gridY >= 0) {
-                g2.drawLine(xGap + gridY, yGap, xGap + gridY, yGap + ySize);  // y-exile
+                g2.drawLine(xGap + gridY, yGap, xGap + gridY, yGap + ySize);  // y-axis
                 gridY -= distance;
             }
 
             gridY = xSize / 2 + distance;
             while (gridY <= xSize) {
-                g2.drawLine(xGap + gridY, yGap, xGap + gridY, yGap + ySize);  // y-exile
+                g2.drawLine(xGap + gridY, yGap, xGap + gridY, yGap + ySize);  // y-axis
                 gridY += distance;
             }
         }
