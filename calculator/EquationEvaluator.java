@@ -176,7 +176,7 @@ public class EquationEvaluator {
                 double[] prev = coordinates[i-1];
                 double[] next = coordinates[i+1];
                 double midPoint = (prev[1] + next[1]) / 2.0;
-                if (Math.abs(next[1] - prev[1]) < Integer.MAX_VALUE) {
+                if (Math.abs(next[1] - prev[1]) < 399.0) {
                     final double[] point = new double[2];
                     point[0] = coordinates[i][0];
                     point[1] = midPoint;
