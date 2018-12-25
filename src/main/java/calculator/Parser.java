@@ -1,5 +1,9 @@
 package calculator;
 
+/**
+ *@author kelly.li
+ */
+
 public class Parser {
 
     private final String str; // original input expression
