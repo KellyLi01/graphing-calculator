@@ -3,16 +3,10 @@ package calculator;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * To change license header, choose License Headers in Project Properties.
- * To change template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * For a given equation, and a range of x-axis, class parses the equation
  *
- * @author yihua
+ * @author kelly.li
  */
 public class EquationEvaluator {
 
@@ -75,6 +69,8 @@ public class EquationEvaluator {
         return asymptote;
     }
 
+    // calculates integration of f(x) over the given interval
+    // returns in output the integration of f'(x) over the given interval using FTC
     public double calculateIntegration(double startX, double endX) {
 
         if (asymptote != null || removableDiscontinuities != null) {
@@ -90,25 +86,25 @@ public class EquationEvaluator {
                         return Double.NaN;
                 }
             }
-            //return Double.NaN;
         }
         int index = 0;
-        while (coordinates/*firstDerivPts*/[index][0] < startX && index < coordinates/*firstDerivPts*/.length) {
+        while (coordinates[index][0] < startX && index < coordinates.length) {
             index++;
         }
 
-        double prevY = coordinates/*firstDerivPts*/[index][1];
+        double prevY = coordinates[index][1];
         double sum = 0.0;
-        while (coordinates/*firstDerivPts*/[index][0] <= endX && index < coordinates/*firstDerivPts*/.length) {
-            double area = Window.INCREMENT * (coordinates/*firstDerivPts*/[index][1] + prevY) / 2.0;
-            sum += /*Math.round(*/area /** 100.0) / 100.0*/;
-            prevY = coordinates/*firstDerivPts*/[index][1];
+        while (coordinates[index][0] <= endX && index < coordinates.length) {
+            double area = Window.INCREMENT * (coordinates[index][1] + prevY) / 2.0;
+            sum += area;
+            prevY = coordinates[index][1];
             index++;
         }
         System.out.println("f(" + endX + ") - f(" + startX + ") = " + Math.round((coordinates[(int)((endX-sX)/step)][1] - coordinates[(int)((startX-sX)/step)][1])*100.0)/100.0);
         return Math.round(sum * 100) / 100.0;
     }
 
+    // finds the relative extrema/points of inflection depending on the input
     private double[][] calcTurningPoints(final double[][] derivatives, boolean isSecondDeriv) {
         if (derivatives == null) {
             return null;
@@ -172,6 +168,7 @@ public class EquationEvaluator {
         return answers;
     }
 
+    // finds holes and vertical asymptotes in the graph
     private double[][] calcDiscontinuities(final double[][] coordinates) {
         final List<double[]> discontinuePoints = new ArrayList<>();
         for (int i = 1; i < coordinates.length; ++i) {
@@ -191,7 +188,6 @@ public class EquationEvaluator {
                     asymptote = new double[2];
                     asymptote[0] = coordinates[i][0];
                     asymptote[1] = midPoint;
-                    //System.out.println("Asymptote at x=" + Math.round(asymptote[0]*100.0)/100.0);
                 }
             }
         }
